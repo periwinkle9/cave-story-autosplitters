@@ -1,6 +1,34 @@
-// Cave Story autosplitter by periwinkle
-// (Based off of magmapeach's Best Ending autosplitter)
+// Cave Story+ (Humble) autosplitter by periwinkle
+// (Based off of magmapeach's CS freeware Best Ending autosplitter)
 
+state("CaveStory+"){
+    uint mapId : 0x001047D4;
+    uint musicId : 0x001047D8;
+    uint prevMusicId : 0x001047E0;
+    uint airMeter : 0x000C1D54;
+    
+    // For Bad Ending split condition
+    uint skyDragon : 0x000C9BE0; // this should be 212 for the dragon
+    uint skyDragonActNo: 0x000C9C2C;
+    
+    // For Normal Ending split condition
+    uint vTrigger : 0x000C972C; // should be 46 (H/V trigger)
+    byte vTriggerCond : 0x000C9704;
+    
+    // These store various story progression flags, one flag per bit.
+    //byte<1000> flagArray : 0x000C15B0;
+    uint flagEgg : 0x000C15BC;     // bit 24: done egg (flag 120)
+    uint flagFire : 0x000C15CC;    // bit 17: fireball (flag 241)
+    uint flagGum : 0x000C15EC;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
+    uint flagGrass : 0x000C15F0;   // bit 8:  done grass (flag 520)
+    uint flagPanties : 0x000C15F8; // bit 5:  panties (flag 581)
+    uint flagToroko : 0x000C15FC;  // bit 15: toroko defeated (flag 623)
+    uint flagCureA : 0x000C1608;   // bit 7:  got cure all (flag 711)
+    uint flagCureA2 : 0x000C1607;  // bit 6:  gave Cure-All to Gero (flag 702)
+    uint flagCore : 0x000C1618;    // bit 0:  defeated Core (water level rose) (flag 832)
+    uint flagMomo : 0x000C1630;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
+    uint flagPignon : 0x000C1670;  // bit 24: ma pignon (flag 1560)
+}
 state("Doukutsu"){
     uint mapId : 0x000A57F0;
     uint musicId : 0x000A57F4;
@@ -29,7 +57,10 @@ state("Doukutsu"){
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
 }
 init{
-    refreshRate = 50;
+    if (game.ProcessName == "Doukutsu")
+        refreshRate = 50;
+    else
+        refreshRate = 60;
     
     Func<uint, int, bool> bitIsSet = (bitMask, bitPos) => {
         return ((bitMask & (1 << bitPos)) != 0);

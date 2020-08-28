@@ -15,7 +15,10 @@ Other categories that are similar to one of the above or start from the beginnin
 The challenge modes in Cave Story+ are *not* supported. Support for these categories is planned for a future release.
 
 ## Usage Instructions
-1. Download the "cave-story.asl" file and place it somewhere safe on your computer.
+1. Download the file corresponding to which version of Cave Story you have:
+   * For the Steam version of Cave Story+, download "cave-story+-steam.asl"
+   * For the Humble version of Cave Story+, download "cave-story+-humble.asl"
+   * For the original freeware version of Cave Story, download "cave-story.asl" **or** either of the two Cave Story+ autosplitters listed above.
 2. Right-click LiveSplit, choose "Edit Layout...", and add a "Scriptable Auto Splitter" component (under "Control").
 3. Go to Layout Settings, click on the "Scriptable Auto Splitter" tab, click "Browse..." and select the file that you saved in Step 1.
 4. (Optional) Check/Uncheck the boxes corresponding to where you want the autosplitter to split.
@@ -32,6 +35,4 @@ would prefer having automated resets, that's why that option is there.
 
 ## Known Issues
 
-- The autosplitter will start the timer when quitting out of a save file to the main menu.
-- Sometimes the autosplitter fails to detect the game version correctly, and so it won't work at all.
-This happens rarely but typically can be resolved by restarting the game.
+- In Cave Story+, if the jukebox is unlocked on the title screen (by beating Hell in under 3 minutes), then the autosplitter will start the timer if you change the music.
