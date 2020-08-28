@@ -10,14 +10,15 @@ Currently, the following categories are officially supported on all difficulty s
 - Normal Ending
 - Bad Ending
 - Get Panties
+
 Other categories that are similar to one of the above or start from the beginning of the game may also partially or fully work.
 
 The challenge modes in Cave Story+ are *not* supported. Support for these categories is planned for a future release.
 
 ## Usage Instructions
 1. Download the file corresponding to which version of Cave Story you have:
-   * For the Steam version of Cave Story+, download "cave-story+-steam.asl"
-   * For the Humble version of Cave Story+, download "cave-story+-humble.asl"
+   * For the Steam version of Cave Story+, download "cave-story+-steam.asl".
+   * For the Humble version of Cave Story+, download "cave-story+-humble.asl".
    * For the original freeware version of Cave Story, download "cave-story.asl" **or** either of the two Cave Story+ autosplitters listed above.
 2. Right-click LiveSplit, choose "Edit Layout...", and add a "Scriptable Auto Splitter" component (under "Control").
 3. Go to Layout Settings, click on the "Scriptable Auto Splitter" tab, click "Browse..." and select the file that you saved in Step 1.
