@@ -36,6 +36,7 @@ state("Doukutsu"){
     uint musicId : 0x000A57F4;
     uint prevMusicId : 0x000A57FC;
     uint airMeter : 0x0009E6DC;
+    int gTSwaitnext : 0x000A5B00;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000AE098; // this should be 212 for the dragon
