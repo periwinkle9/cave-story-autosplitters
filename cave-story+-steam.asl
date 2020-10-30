@@ -7,6 +7,7 @@ state("CaveStory+"){
     uint musicId : 0x00106AE8;
     uint prevMusicId : 0x00106AF0;
     uint airMeter : 0x000C4064;
+    int gTSwaitnext : 0x001043D0;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000CBEF0; // this should be 212 for the dragon
@@ -173,7 +174,7 @@ split{
     if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[42] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[42] = true; }
     if (settings["SplitDoctor"]        && !vars.triggeredSplits[43] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[43] = true; }
     if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[44] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[44] = true; }
-    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32)                                                            { return vars.triggeredSplits[45] = true; }
+    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[45] = true; }
     if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[46] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[46] = true; }
     if (settings["SplitEnterHell"]     && !vars.triggeredSplits[47] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[47] = true; }
     if (settings["SplitBestEnd"]       && !vars.triggeredSplits[48] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[48] = true; }

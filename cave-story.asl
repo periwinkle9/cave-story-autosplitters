@@ -6,6 +6,7 @@ state("Doukutsu"){
     uint musicId : 0x000A57F4;
     uint prevMusicId : 0x000A57FC;
     uint airMeter : 0x0009E6DC;
+    int gTSwaitnext : 0x000A5B00;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000AE098; // this should be 212 for the dragon
@@ -16,6 +17,7 @@ state("Doukutsu"){
     byte vTriggerCond : 0x000ADBBC;
     
     // These store various story progression flags, one flag per bit.
+    //byte<1000> flagArray: 0x0009DDA0
     uint flagEgg : 0x0009DDAC;    // bit 24: done egg (flag 120)
     uint flagFire : 0x0009DDBC;   // bit 17: fireball (flag 241)
     uint flagGum : 0x0009DDDC;    // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
@@ -141,7 +143,7 @@ split{
     if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[42] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[42] = true; }
     if (settings["SplitDoctor"]        && !vars.triggeredSplits[43] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[43] = true; }
     if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[44] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[44] = true; }
-    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32)                                                            { return vars.triggeredSplits[45] = true; }
+    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[45] = true; }
     if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[46] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[46] = true; }
     if (settings["SplitEnterHell"]     && !vars.triggeredSplits[47] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[47] = true; }
     if (settings["SplitBestEnd"]       && !vars.triggeredSplits[48] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[48] = true; }
