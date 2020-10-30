@@ -66,7 +66,7 @@ init{
         return ((bitMask & (1 << bitPos)) != 0);
     };
     vars.bitIsSet = bitIsSet;
-    vars.triggeredSplits = new bool[47];
+    vars.triggeredSplits = new bool[49];
 }
 startup{
     settings.Add("SplitPolarStar", false, "Obtain Polar Star");
@@ -110,8 +110,10 @@ startup{
     settings.Add("SplitSleep", false, "Sleep");
     settings.Add("SplitEnterFinal", true, "Enter Last Cave");
     settings.Add("SplitFinalCave", true, "Exit Last Cave");
-    settings.Add("SplitMisery", true, "Exit Misery's Room");
-    settings.Add("SplitDoctor", true, "Exit Doctor's Room");
+    settings.Add("SplitMisery", false, "Defeat Misery");
+    settings.Add("SplitMiseryExit", true, "Exit Misery's Room");
+    settings.Add("SplitDoctor", false, "Defeat the Doctor");
+    settings.Add("SplitDoctorExit", true, "Exit Doctor's Room");
     settings.Add("SplitUndeadCore", true, "Defeat Undead Core");
     settings.Add("SplitNormalEnd", true, "Got Normal Ending");
     settings.Add("SplitEnterHell", false, "Enter Hell");
@@ -166,12 +168,14 @@ split{
     if (settings["SplitSleep"]         && !vars.triggeredSplits[38] && current.mapId == 58 && current.musicId == 2 && old.musicId == 0 && vars.bitIsSet(current.flagMomo, 15))       { return vars.triggeredSplits[38] = true; }
     if (settings["SplitEnterFinal"]    && !vars.triggeredSplits[39] && current.musicId == 29 && (old.musicId == 0 || old.musicId == 24))                                             { return vars.triggeredSplits[39] = true; }
     if (settings["SplitFinalCave"]     && !vars.triggeredSplits[40] && current.mapId == 62 && (old.mapId == 67 || old.mapId == 63))                                                  { return vars.triggeredSplits[40] = true; }
-    if (settings["SplitMisery"]        && !vars.triggeredSplits[41] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[41] = true; }
-    if (settings["SplitDoctor"]        && !vars.triggeredSplits[42] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[42] = true; }
-    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[43] && current.prevMusicId == 0 && old.prevMusicId == 32)                                                            { return vars.triggeredSplits[43] = true; }
-    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[44] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[44] = true; }
-    if (settings["SplitEnterHell"]     && !vars.triggeredSplits[45] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[45] = true; }
-    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[46] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[46] = true; }
+    if (settings["SplitMisery"]        && !vars.triggeredSplits[41] && current.mapId == 64 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[41] = true; }
+    if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[42] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[42] = true; }
+    if (settings["SplitDoctor"]        && !vars.triggeredSplits[43] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[43] = true; }
+    if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[44] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[44] = true; }
+    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32)                                                            { return vars.triggeredSplits[45] = true; }
+    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[46] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[46] = true; }
+    if (settings["SplitEnterHell"]     && !vars.triggeredSplits[47] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[47] = true; }
+    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[48] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[48] = true; }
     
     return false;
 }
