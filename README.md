@@ -1,5 +1,5 @@
 # Cave Story(+) Autosplitters
-LiveSplit autosplitters for Cave Story (original freeware version) and Cave Story+ (Steam/Humble PC versions).
+LiveSplit autosplitters for Cave Story (original freeware version) and Cave Story+ (Steam/Humble/Epic PC versions).
 
 Credits for most of this work goes to magmapeach, whose Cave Story (freeware) Best Ending autosplitter I used as the basis for this autosplitter.
 You can find their original autosplitter linked on the [Cave Story sr.c resources page](https://www.speedrun.com/cave_story/resources).
@@ -19,7 +19,8 @@ The challenge modes in Cave Story+ are *not* supported. Support for these catego
 1. Download the file corresponding to which version of Cave Story you have:
    * For the Steam version of Cave Story+, download "cave-story+-steam.asl".
    * For the Humble version of Cave Story+, download "cave-story+-humble.asl".
-   * For the original freeware version of Cave Story, download "cave-story.asl" **or** either of the two Cave Story+ autosplitters listed above.
+   * For the Epic Games Store version of Cave Story+, download "cave-story+-epic.asl".
+   * For the original freeware version of Cave Story, download "cave-story.asl" **or** any of the Cave Story+ autosplitters listed above.
 2. Right-click LiveSplit, choose "Edit Layout...", and add a "Scriptable Auto Splitter" component (under "Control").
 3. Go to Layout Settings, click on the "Scriptable Auto Splitter" tab, click "Browse..." and select the file that you saved in Step 1.
 4. (Optional) Check/Uncheck the boxes corresponding to where you want the autosplitter to split.
