@@ -26,7 +26,7 @@ state("CaveStory+"){
     uint flagPanties : 0x000C3908; // bit 5:  panties (flag 581)
     uint flagToroko : 0x000C390C;  // bit 15: toroko defeated (flag 623)
     uint flagCureA : 0x000C3918;   // bit 7:  got cure all (flag 711)
-    uint flagCureA2 : 0x000C3917;  // bit 6:  gave Cure-All to Gero (flag 702)
+    uint flagCureA2 : 0x000C3914;  // bit 30: gave Cure-All to Gero (flag 702)
     uint flagCore : 0x000C3928;    // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x000C3940;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
     uint flagPignon : 0x000C3980;  // bit 24: ma pignon (flag 1560)
@@ -54,7 +54,7 @@ state("Doukutsu"){
     uint flagPanties: 0x0009DDE8; // bit 5:  panties (flag 581)
     uint flagToroko : 0x0009DDEC; // bit 15: toroko defeated (flag 623)
     uint flagCureA : 0x0009DDF8;  // bit 7:  got cure all (flag 711)
-    uint flagCureA2 : 0x0009DDF7; // bit 6:  gave Cure-All to Gero (flag 702)
+    uint flagCureA2 : 0x0009DDF4; // bit 30: gave Cure-All to Gero (flag 702)
     uint flagCore : 0x0009DE08;   // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x0009DE20;   // bit 15: momorin outside, 22: got iron bond
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
@@ -156,7 +156,7 @@ split{
     if (settings["SplitBlade"]         && !vars.triggeredSplits[23] && current.musicId == 10 && old.musicId != 10 && current.mapId == 35)                                            { return vars.triggeredSplits[23] = true; }
     if (settings["SplitExitSand"]      && !vars.triggeredSplits[24] && current.mapId == 9 && old.mapId == 37)                                                                        { return vars.triggeredSplits[24] = true; }
     if (settings["SplitPoohBlack"]     && !vars.triggeredSplits[25] && current.mapId == 39 && old.mapId == 41 && vars.bitIsSet(current.flagCureA, 7))                                { return vars.triggeredSplits[25] = true; }
-    if (settings["SplitCureAll"]       && !vars.triggeredSplits[26] && vars.bitIsSet(current.flagCureA2, 6) && !vars.bitIsSet(old.flagCureA2, 6))                                    { return vars.triggeredSplits[26] = true; }
+    if (settings["SplitCureAll"]       && !vars.triggeredSplits[26] && vars.bitIsSet(current.flagCureA2, 30) && !vars.bitIsSet(old.flagCureA2, 30))                                  { return vars.triggeredSplits[26] = true; }
     if (settings["SplitMonsterX"]      && !vars.triggeredSplits[27] && current.mapId == 39 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[27] = true; }
     if (settings["SplitLabW"]          && !vars.triggeredSplits[28] && current.mapId == 43 && old.mapId == 39)                                                                       { return vars.triggeredSplits[28] = true; }
     if (settings["SplitLabM"]          && !vars.triggeredSplits[29] && current.mapId == 46 && old.mapId == 45)                                                                       { return vars.triggeredSplits[29] = true; }
