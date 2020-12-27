@@ -2,33 +2,33 @@
 // (Based off of magmapeach's CS freeware Best Ending autosplitter)
 
 state("CaveStory+"){
-    uint mapId : 0x0011AEEC;
-    uint musicId : 0x0011AEE8;
-    uint prevMusicId : 0x0011AEF4;
-    uint airMeter : 0x000DF144;
-    int gTSwaitnext : 0x0011B318;
+    uint mapId : 0x00119EEC;
+    uint musicId : 0x00119EE8;
+    uint prevMusicId : 0x00119EF4;
+    uint airMeter : 0x000DE144;
+    int gTSwaitnext : 0x0011A318;
     
     // For Bad Ending split condition
-    uint skyDragon : 0x000E6FF0; // this should be 212 for the dragon
-    uint skyDragonActNo: 0x000E703C;
+    uint skyDragon : 0x000E5FF0; // this should be 212 for the dragon
+    uint skyDragonActNo: 0x000E603C;
     
     // For Normal Ending split condition
-    uint vTrigger : 0x000E6B3C; // should be 46 (H/V trigger)
-    byte vTriggerCond : 0x000E6B14;
+    uint vTrigger : 0x000E5B3C; // should be 46 (H/V trigger)
+    byte vTriggerCond : 0x000E5B14;
     
     // These store various story progression flags, one flag per bit.
-    //byte<1000> flagArray : 0x000DEA48;
-    uint flagEgg : 0x000DEA54;     // bit 24: done egg (flag 120)
-    uint flagFire : 0x000DEA64;    // bit 17: fireball (flag 241)
-    uint flagGum : 0x000DEA84;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
-    uint flagGrass : 0x000DEA88;   // bit 8:  done grass (flag 520)
-    uint flagPanties : 0x000DEA90; // bit 5:  panties (flag 581)
-    uint flagToroko : 0x000DEA94;  // bit 15: toroko defeated (flag 623)
-    uint flagCureA : 0x000DEAA0;   // bit 7:  got cure all (flag 711)
-    uint flagCureA2 : 0x000DEA9C;  // bit 30: gave Cure-All to Gero (flag 702)
-    uint flagCore : 0x000DEAB0;    // bit 0:  defeated Core (water level rose) (flag 832)
-    uint flagMomo : 0x000DEAC8;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
-    uint flagPignon : 0x000DEB08;  // bit 24: ma pignon (flag 1560)
+    //byte<1000> flagArray : 0x000DDA48;
+    uint flagEgg : 0x000DDA54;     // bit 24: done egg (flag 120)
+    uint flagFire : 0x000DDA64;    // bit 17: fireball (flag 241)
+    uint flagGum : 0x000DDA84;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
+    uint flagGrass : 0x000DDA88;   // bit 8:  done grass (flag 520)
+    uint flagPanties : 0x000DDA90; // bit 5:  panties (flag 581)
+    uint flagToroko : 0x000DDA94;  // bit 15: toroko defeated (flag 623)
+    uint flagCureA : 0x000DDAA0;   // bit 7:  got cure all (flag 711)
+    uint flagCureA2 : 0x000DDA9C;  // bit 30: gave Cure-All to Gero (flag 702)
+    uint flagCore : 0x000DDAB0;    // bit 0:  defeated Core (water level rose) (flag 832)
+    uint flagMomo : 0x000DDAC8;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
+    uint flagPignon : 0x000DDB08;  // bit 24: ma pignon (flag 1560)
 }
 state("Doukutsu"){
     uint mapId : 0x000A57F0;
