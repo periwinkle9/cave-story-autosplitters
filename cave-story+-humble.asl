@@ -20,6 +20,7 @@ state("CaveStory+"){
     //byte<1000> flagArray : 0x000C15B0;
     uint flagEgg : 0x000C15BC;     // bit 24: done egg (flag 120)
     uint flagFire : 0x000C15CC;    // bit 17: fireball (flag 241)
+    uint flagGumKey: 0x000C15C8;   // bit 29: got gum key (flag 221)
     uint flagGum : 0x000C15EC;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
     uint flagGrass : 0x000C15F0;   // bit 8:  done grass (flag 520)
     uint flagPanties : 0x000C15F8; // bit 5:  panties (flag 581)
@@ -48,6 +49,7 @@ state("Doukutsu"){
     // These store various story progression flags, one flag per bit.
     uint flagEgg : 0x0009DDAC;    // bit 24: done egg (flag 120)
     uint flagFire : 0x0009DDBC;   // bit 17: fireball (flag 241)
+    uint flagGumKey : 0x0009DDB8; // bit 29: got gum key (flag 221)
     uint flagGum : 0x0009DDDC;    // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
     uint flagGrass : 0x0009DDE0;  // bit 8:  done grass (flag 520)
     uint flagPanties: 0x0009DDE8; // bit 5:  panties (flag 581)
@@ -68,7 +70,7 @@ init{
         return ((bitMask & (1 << bitPos)) != 0);
     };
     vars.bitIsSet = bitIsSet;
-    vars.triggeredSplits = new bool[49];
+    vars.triggeredSplits = new bool[50];
 }
 startup{
     settings.Add("SplitPolarStar", false, "Obtain Polar Star");
@@ -82,6 +84,7 @@ startup{
     settings.Add("SplitCharcoal", false, "Obtain Charcoal");
     settings.Add("SplitBalrog2", false, "Defeat Balrog");
     settings.Add("SplitExitBalrog2", true, "Exit Power Room");
+    settings.Add("SplitGumKey", false, "Obtain Gum Key");
     settings.Add("SplitBalfrog", false, "Defeat Balfrog");
     settings.Add("SplitExitGum", false, "Exit Gum Room");
     settings.Add("SplitBomb", true, "Obtain Bomb");
@@ -140,44 +143,45 @@ split{
     if (settings["SplitCharcoal"]      && !vars.triggeredSplits[8]  && current.musicId == 10 && old.musicId != 10 && current.mapId == 7 && vars.bitIsSet(current.flagFire, 17))      { return vars.triggeredSplits[8]  = true; }
     if (settings["SplitBalrog2"]       && !vars.triggeredSplits[9]  && current.musicId == 15 && old.musicId != 15 && current.mapId == 25)                                            { return vars.triggeredSplits[9]  = true; }
     if (settings["SplitExitBalrog2"]   && !vars.triggeredSplits[10] && current.mapId == 6 && old.mapId == 25 && vars.bitIsSet(current.flagGum, 4))                                   { return vars.triggeredSplits[10] = true; }
-    if (settings["SplitBalfrog"]       && !vars.triggeredSplits[11] && current.musicId == 15 && old.musicId != 15 && current.mapId == 28)                                            { return vars.triggeredSplits[11] = true; }
-    if (settings["SplitExitGum"]       && !vars.triggeredSplits[12] && current.mapId == 6 && old.mapId == 28 && vars.bitIsSet(current.flagGum, 21))                                  { return vars.triggeredSplits[12] = true; }
-    if (settings["SplitBomb"]          && !vars.triggeredSplits[13] && current.musicId == 10 && old.musicId != 10 && current.mapId == 25)                                            { return vars.triggeredSplits[13] = true; }
-    if (settings["SplitExitGrass"]     && !vars.triggeredSplits[14] && current.mapId == 11 && old.mapId == 6 && vars.bitIsSet(current.flagGrass, 8))                                 { return vars.triggeredSplits[14] = true; }
-    if (settings["SplitEnterSand"]     && !vars.triggeredSplits[15] && current.mapId == 10 && old.mapId == 1)                                                                        { return vars.triggeredSplits[15] = true; }
-    if (settings["SplitCurly"]         && !vars.triggeredSplits[16] && current.musicId == 15 && old.musicId != 15 && current.mapId == 29)                                            { return vars.triggeredSplits[16] = true; }
-    if (settings["SplitMachineGun"]    && !vars.triggeredSplits[17] && current.musicId == 10 && old.musicId != 10 && current.mapId == 29)                                            { return vars.triggeredSplits[17] = true; }
-    if (settings["SplitPanties"]       && !vars.triggeredSplits[18] && vars.bitIsSet(current.flagPanties, 5) && !vars.bitIsSet(old.flagPanties, 5))                                  { return vars.triggeredSplits[18] = true; }
-    if (settings["SplitOmega"]         && !vars.triggeredSplits[19] && current.musicId == 15 && old.musicId != 15 && current.mapId == 10)                                            { return vars.triggeredSplits[19] = true; }
-    if (settings["SplitJenka"]         && !vars.triggeredSplits[20] && current.mapId == 33 && old.mapId == 10)                                                                       { return vars.triggeredSplits[20] = true; }
-    if (settings["SplitDogs"]          && !vars.triggeredSplits[21] && current.mapId == 36 && old.mapId == 10)                                                                       { return vars.triggeredSplits[21] = true; }
-    if (settings["SplitToroko"]        && !vars.triggeredSplits[22] && current.musicId == 0 && old.musicId != 0 && current.mapId == 35 && vars.bitIsSet(current.flagToroko, 15))     { return vars.triggeredSplits[22] = true; }
-    if (settings["SplitBlade"]         && !vars.triggeredSplits[23] && current.musicId == 10 && old.musicId != 10 && current.mapId == 35)                                            { return vars.triggeredSplits[23] = true; }
-    if (settings["SplitExitSand"]      && !vars.triggeredSplits[24] && current.mapId == 9 && old.mapId == 37)                                                                        { return vars.triggeredSplits[24] = true; }
-    if (settings["SplitPoohBlack"]     && !vars.triggeredSplits[25] && current.mapId == 39 && old.mapId == 41 && vars.bitIsSet(current.flagCureA, 7))                                { return vars.triggeredSplits[25] = true; }
-    if (settings["SplitCureAll"]       && !vars.triggeredSplits[26] && vars.bitIsSet(current.flagCureA2, 30) && !vars.bitIsSet(old.flagCureA2, 30))                                  { return vars.triggeredSplits[26] = true; }
-    if (settings["SplitMonsterX"]      && !vars.triggeredSplits[27] && current.mapId == 39 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[27] = true; }
-    if (settings["SplitLabW"]          && !vars.triggeredSplits[28] && current.mapId == 43 && old.mapId == 39)                                                                       { return vars.triggeredSplits[28] = true; }
-    if (settings["SplitLabM"]          && !vars.triggeredSplits[29] && current.mapId == 46 && old.mapId == 45)                                                                       { return vars.triggeredSplits[29] = true; }
-    if (settings["SplitDrown"]         && !vars.triggeredSplits[30] && current.mapId == 47 && vars.bitIsSet(current.flagCore, 0) && old.airMeter != 0 && current.airMeter == 0)      { return vars.triggeredSplits[30] = true; }
-    if (settings["SplitIronhead"]      && !vars.triggeredSplits[31] && current.mapId == 15 && old.mapId == 31)                                                                       { return vars.triggeredSplits[31] = true; }
-    if (settings["SplitEgg2"]          && !vars.triggeredSplits[32] && current.mapId == 52 && old.mapId == 49)                                                                       { return vars.triggeredSplits[32] = true; }
-    if (settings["SplitBadEnd"]        && !vars.triggeredSplits[33] && current.mapId == 53 && current.skyDragon == 212 && current.skyDragonActNo >= 10 && old.skyDragonActNo == 1)   { return vars.triggeredSplits[33] = true; }
-    if (settings["SplitOuterWall"]     && !vars.triggeredSplits[34] && current.mapId == 55 && old.mapId == 53)                                                                       { return vars.triggeredSplits[34] = true; }
-    if (settings["SplitMushroom"]      && !vars.triggeredSplits[35] && current.mapId == 83 && current.musicId == 10 && old.musicId != 10 && vars.bitIsSet(current.flagPignon, 24))   { return vars.triggeredSplits[35] = true; }
-    if (settings["SplitLeaveMushroom"] && !vars.triggeredSplits[36] && current.mapId == 16 && old.mapId == 83 && vars.bitIsSet(current.flagPignon, 24))                              { return vars.triggeredSplits[36] = true; }
-    if (settings["SplitIronBond"]      && !vars.triggeredSplits[37] && vars.bitIsSet(current.flagMomo, 22) && !vars.bitIsSet(old.flagMomo, 22))                                      { return vars.triggeredSplits[37] = true; }
-    if (settings["SplitSleep"]         && !vars.triggeredSplits[38] && current.mapId == 58 && current.musicId == 2 && old.musicId == 0 && vars.bitIsSet(current.flagMomo, 15))       { return vars.triggeredSplits[38] = true; }
-    if (settings["SplitEnterFinal"]    && !vars.triggeredSplits[39] && current.musicId == 29 && (old.musicId == 0 || old.musicId == 24))                                             { return vars.triggeredSplits[39] = true; }
-    if (settings["SplitFinalCave"]     && !vars.triggeredSplits[40] && current.mapId == 62 && (old.mapId == 67 || old.mapId == 63))                                                  { return vars.triggeredSplits[40] = true; }
-    if (settings["SplitMisery"]        && !vars.triggeredSplits[41] && current.mapId == 64 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[41] = true; }
-    if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[42] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[42] = true; }
-    if (settings["SplitDoctor"]        && !vars.triggeredSplits[43] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[43] = true; }
-    if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[44] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[44] = true; }
-    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[45] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[45] = true; }
-    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[46] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[46] = true; }
-    if (settings["SplitEnterHell"]     && !vars.triggeredSplits[47] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[47] = true; }
-    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[48] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[48] = true; }
+    if (settings["SplitGumKey"]        && !vars.triggeredSplits[11] && vars.bitIsSet(current.flagGumKey, 29) && !vars.bitIsSet(old.flagGumKey, 29))                                  { return vars.triggeredSplits[11] = true; }
+    if (settings["SplitBalfrog"]       && !vars.triggeredSplits[12] && current.musicId == 15 && old.musicId != 15 && current.mapId == 28)                                            { return vars.triggeredSplits[12] = true; }
+    if (settings["SplitExitGum"]       && !vars.triggeredSplits[13] && current.mapId == 6 && old.mapId == 28 && vars.bitIsSet(current.flagGum, 21))                                  { return vars.triggeredSplits[13] = true; }
+    if (settings["SplitBomb"]          && !vars.triggeredSplits[14] && current.musicId == 10 && old.musicId != 10 && current.mapId == 25)                                            { return vars.triggeredSplits[14] = true; }
+    if (settings["SplitExitGrass"]     && !vars.triggeredSplits[15] && current.mapId == 11 && old.mapId == 6 && vars.bitIsSet(current.flagGrass, 8))                                 { return vars.triggeredSplits[15] = true; }
+    if (settings["SplitEnterSand"]     && !vars.triggeredSplits[16] && current.mapId == 10 && old.mapId == 1)                                                                        { return vars.triggeredSplits[16] = true; }
+    if (settings["SplitCurly"]         && !vars.triggeredSplits[17] && current.musicId == 15 && old.musicId != 15 && current.mapId == 29)                                            { return vars.triggeredSplits[17] = true; }
+    if (settings["SplitMachineGun"]    && !vars.triggeredSplits[18] && current.musicId == 10 && old.musicId != 10 && current.mapId == 29)                                            { return vars.triggeredSplits[18] = true; }
+    if (settings["SplitPanties"]       && !vars.triggeredSplits[19] && vars.bitIsSet(current.flagPanties, 5) && !vars.bitIsSet(old.flagPanties, 5))                                  { return vars.triggeredSplits[19] = true; }
+    if (settings["SplitOmega"]         && !vars.triggeredSplits[20] && current.musicId == 15 && old.musicId != 15 && current.mapId == 10)                                            { return vars.triggeredSplits[20] = true; }
+    if (settings["SplitJenka"]         && !vars.triggeredSplits[21] && current.mapId == 33 && old.mapId == 10)                                                                       { return vars.triggeredSplits[21] = true; }
+    if (settings["SplitDogs"]          && !vars.triggeredSplits[22] && current.mapId == 36 && old.mapId == 10)                                                                       { return vars.triggeredSplits[22] = true; }
+    if (settings["SplitToroko"]        && !vars.triggeredSplits[23] && current.musicId == 0 && old.musicId != 0 && current.mapId == 35 && vars.bitIsSet(current.flagToroko, 15))     { return vars.triggeredSplits[23] = true; }
+    if (settings["SplitBlade"]         && !vars.triggeredSplits[24] && current.musicId == 10 && old.musicId != 10 && current.mapId == 35)                                            { return vars.triggeredSplits[24] = true; }
+    if (settings["SplitExitSand"]      && !vars.triggeredSplits[25] && current.mapId == 9 && old.mapId == 37)                                                                        { return vars.triggeredSplits[25] = true; }
+    if (settings["SplitPoohBlack"]     && !vars.triggeredSplits[26] && current.mapId == 39 && old.mapId == 41 && vars.bitIsSet(current.flagCureA, 7))                                { return vars.triggeredSplits[26] = true; }
+    if (settings["SplitCureAll"]       && !vars.triggeredSplits[27] && vars.bitIsSet(current.flagCureA2, 30) && !vars.bitIsSet(old.flagCureA2, 30))                                  { return vars.triggeredSplits[27] = true; }
+    if (settings["SplitMonsterX"]      && !vars.triggeredSplits[28] && current.mapId == 39 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[28] = true; }
+    if (settings["SplitLabW"]          && !vars.triggeredSplits[29] && current.mapId == 43 && old.mapId == 39)                                                                       { return vars.triggeredSplits[29] = true; }
+    if (settings["SplitLabM"]          && !vars.triggeredSplits[30] && current.mapId == 46 && old.mapId == 45)                                                                       { return vars.triggeredSplits[30] = true; }
+    if (settings["SplitDrown"]         && !vars.triggeredSplits[31] && current.mapId == 47 && vars.bitIsSet(current.flagCore, 0) && old.airMeter != 0 && current.airMeter == 0)      { return vars.triggeredSplits[31] = true; }
+    if (settings["SplitIronhead"]      && !vars.triggeredSplits[32] && current.mapId == 15 && old.mapId == 31)                                                                       { return vars.triggeredSplits[32] = true; }
+    if (settings["SplitEgg2"]          && !vars.triggeredSplits[33] && current.mapId == 52 && old.mapId == 49)                                                                       { return vars.triggeredSplits[33] = true; }
+    if (settings["SplitBadEnd"]        && !vars.triggeredSplits[34] && current.mapId == 53 && current.skyDragon == 212 && current.skyDragonActNo >= 10 && old.skyDragonActNo == 1)   { return vars.triggeredSplits[34] = true; }
+    if (settings["SplitOuterWall"]     && !vars.triggeredSplits[35] && current.mapId == 55 && old.mapId == 53)                                                                       { return vars.triggeredSplits[35] = true; }
+    if (settings["SplitMushroom"]      && !vars.triggeredSplits[36] && current.mapId == 83 && current.musicId == 10 && old.musicId != 10 && vars.bitIsSet(current.flagPignon, 24))   { return vars.triggeredSplits[36] = true; }
+    if (settings["SplitLeaveMushroom"] && !vars.triggeredSplits[37] && current.mapId == 16 && old.mapId == 83 && vars.bitIsSet(current.flagPignon, 24))                              { return vars.triggeredSplits[37] = true; }
+    if (settings["SplitIronBond"]      && !vars.triggeredSplits[38] && vars.bitIsSet(current.flagMomo, 22) && !vars.bitIsSet(old.flagMomo, 22))                                      { return vars.triggeredSplits[38] = true; }
+    if (settings["SplitSleep"]         && !vars.triggeredSplits[39] && current.mapId == 58 && current.musicId == 2 && old.musicId == 0 && vars.bitIsSet(current.flagMomo, 15))       { return vars.triggeredSplits[39] = true; }
+    if (settings["SplitEnterFinal"]    && !vars.triggeredSplits[40] && current.musicId == 29 && (old.musicId == 0 || old.musicId == 24))                                             { return vars.triggeredSplits[40] = true; }
+    if (settings["SplitFinalCave"]     && !vars.triggeredSplits[41] && current.mapId == 62 && (old.mapId == 67 || old.mapId == 63))                                                  { return vars.triggeredSplits[41] = true; }
+    if (settings["SplitMisery"]        && !vars.triggeredSplits[42] && current.mapId == 64 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[42] = true; }
+    if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[43] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[43] = true; }
+    if (settings["SplitDoctor"]        && !vars.triggeredSplits[44] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[44] = true; }
+    if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[45] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[45] = true; }
+    if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[46] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[46] = true; }
+    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[47] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[47] = true; }
+    if (settings["SplitEnterHell"]     && !vars.triggeredSplits[48] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[48] = true; }
+    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[49] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[49] = true; }
     
     return false;
 }
