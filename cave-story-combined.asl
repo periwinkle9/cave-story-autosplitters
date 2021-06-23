@@ -276,7 +276,7 @@ split{
     if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[46] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[46] = true; }
     if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[47] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[47] = true; }
     if (settings["SplitEnterHell"]     && !vars.triggeredSplits[48] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[48] = true; }
-    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[49] && current.mapId == 91 && old.mapId != 91)                                                                       { return vars.triggeredSplits[49] = true; }
+    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[49] && current.mapId == 91 && current.musicId == 0 && old.musicId != 0)                                              { return vars.triggeredSplits[49] = true; }
     
     return false;
 }
