@@ -35,4 +35,5 @@ would prefer having automated resets, that's why that option is there.
 
 ## Known Issues
 
+- In freeware Cave Story, resetting the game with Esc > F2 while on the title screen causes the autosplitter to start the timer.
 - In Cave Story+, if the jukebox is unlocked on the title screen (by beating Hell in under 3 minutes), then the autosplitter will start the timer if you change the music.
