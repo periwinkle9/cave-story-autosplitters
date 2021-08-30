@@ -53,7 +53,7 @@ state("CaveStory+", "Steam"){
     //byte<1000> flagArray : 0x000C38C0;
     uint flagEgg : 0x000C38CC;     // bit 24: done egg (flag 120)
     uint flagFire : 0x000C38DC;    // bit 17: fireball (flag 241)
-	uint flagGumKey : 0x000C38D8;  // bit 29: got gum key (flag 221)
+    uint flagGumKey : 0x000C38D8;  // bit 29: got gum key (flag 221)
     uint flagGum : 0x000C38FC;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
     uint flagGrass : 0x000C3900;   // bit 8:  done grass (flag 520)
     uint flagPanties : 0x000C3908; // bit 5:  panties (flag 581)
@@ -84,7 +84,7 @@ state("CaveStory+", "Humble"){
     //byte<1000> flagArray : 0x000C15B0;
     uint flagEgg : 0x000C15BC;     // bit 24: done egg (flag 120)
     uint flagFire : 0x000C15CC;    // bit 17: fireball (flag 241)
-	uint flagGumKey: 0x000C15C8;   // bit 29: got gum key (flag 221)
+    uint flagGumKey: 0x000C15C8;   // bit 29: got gum key (flag 221)
     uint flagGum : 0x000C15EC;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
     uint flagGrass : 0x000C15F0;   // bit 8:  done grass (flag 520)
     uint flagPanties : 0x000C15F8; // bit 5:  panties (flag 581)
@@ -115,7 +115,7 @@ state("CaveStory+", "Epic"){
     //byte<1000> flagArray : 0x000DDA48;
     uint flagEgg : 0x000DDA54;     // bit 24: done egg (flag 120)
     uint flagFire : 0x000DDA64;    // bit 17: fireball (flag 241)
-	uint flagGumKey : 0x000DDA60;  // bit 29: got gum key (flag 221)
+    uint flagGumKey : 0x000DDA60;  // bit 29: got gum key (flag 221)
     uint flagGum : 0x000DDA84;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
     uint flagGrass : 0x000DDA88;   // bit 8:  done grass (flag 520)
     uint flagPanties : 0x000DDA90; // bit 5:  panties (flag 581)
@@ -129,15 +129,15 @@ state("CaveStory+", "Epic"){
 
 init{
     // modules.First() sometimes points to ntdll.dll instead of the actual game's executable.
-	// To resolve this, we throw an exception and let LiveSplit retry the initialization.
+    // To resolve this, we throw an exception and let LiveSplit retry the initialization.
     // Hopefully this is a reliable way to handle this issue.
     if (modules.First().ModuleName != game.ProcessName + ".exe")
     {
         print("THE BUG HAPPENED >:( (retrying init)");
-		throw new Exception("init - module not found, retrying");
-	}
-	
-	int memSize = modules.First().ModuleMemorySize;
+        throw new Exception("init - module not found, retrying");
+    }
+    
+    int memSize = modules.First().ModuleMemorySize;
     if (game.ProcessName == "Doukutsu")
     {
         if (modules.First().FileVersionInfo.FileVersion == "1, 0, 0, 6")
@@ -223,7 +223,7 @@ startup{
 }
 
 start{
-	return current.prevMusicId > 0 && old.prevMusicId == 0 && old.mapId == 72;
+    return current.prevMusicId > 0 && old.prevMusicId == 0 && old.mapId == 72;
 }
 
 split{
