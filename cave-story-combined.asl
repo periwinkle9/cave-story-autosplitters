@@ -9,6 +9,7 @@ state("Doukutsu", "1.0.0.6"){
     uint prevMusicId : 0x000A57FC;
     uint airMeter : 0x0009E6DC;
     int gTSwaitnext : 0x000A5B00;
+    uint gameFlags : 0x0009E1E8;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000AE098; // this should be 212 for the dragon
@@ -40,6 +41,7 @@ state("CaveStory+", "Steam"){
     uint prevMusicId : 0x00106AF0;
     uint airMeter : 0x000C4064;
     int gTSwaitnext : 0x001043D0;
+    uint gameFlags : 0x000C3CD4;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000CBEF0; // this should be 212 for the dragon
@@ -71,6 +73,7 @@ state("CaveStory+", "Humble"){
     uint prevMusicId : 0x001047E0;
     uint airMeter : 0x000C1D54;
     int gTSwaitnext : 0x001020C0;
+    uint gameFlags : 0x000C19C4;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000C9BE0; // this should be 212 for the dragon
@@ -102,6 +105,7 @@ state("CaveStory+", "Epic"){
     uint prevMusicId : 0x00119EF4;
     uint airMeter : 0x000DE144;
     int gTSwaitnext : 0x0011A318;
+    uint gameFlags : 0x000DDE90;
     
     // For Bad Ending split condition
     uint skyDragon : 0x000E5FF0; // this should be 212 for the dragon
@@ -279,6 +283,10 @@ split{
     if (settings["SplitBestEnd"]       && !vars.triggeredSplits[49] && current.mapId == 91 && current.musicId == 0 && old.musicId != 0)                                              { return vars.triggeredSplits[49] = true; }
     
     return false;
+}
+
+isLoading{
+    return (current.gameFlags & 2) == 0;
 }
 
 reset{
