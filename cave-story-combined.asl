@@ -278,7 +278,7 @@ split{
     if (settings["SplitDoctor"]        && !vars.triggeredSplits[44] && current.mapId == 65 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[44] = true; }
     if (settings["SplitDoctorExit"]    && !vars.triggeredSplits[45] && current.mapId == 68 && old.mapId == 65)                                                                       { return vars.triggeredSplits[45] = true; }
     if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[46] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[46] = true; }
-    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[47] && current.mapId == 70 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128)        { return vars.triggeredSplits[47] = true; }
+    if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[47] && current.mapId == 70 && current.musicId == 18 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128) { return vars.triggeredSplits[47] = true; }
     if (settings["SplitEnterHell"]     && !vars.triggeredSplits[48] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[48] = true; }
     if (settings["SplitBestEnd"]       && !vars.triggeredSplits[49] && current.mapId == 91 && current.musicId == 0 && old.musicId != 0)                                              { return vars.triggeredSplits[49] = true; }
     
