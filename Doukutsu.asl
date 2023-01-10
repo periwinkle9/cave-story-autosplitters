@@ -174,6 +174,7 @@ startup{
     
     vars.timerModel = new TimerModel { CurrentState = timer };
     // Search for text component to display CMU count and CMU lag
+    vars.cmuTextComponent = null;
     foreach (dynamic component in timer.Layout.Components)
     {
         if (component.GetType().Name == "TextComponent" && component.Settings.Text1 == "CMU count")
