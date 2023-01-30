@@ -31,6 +31,8 @@ state("Doukutsu", "1.0.0.6"){
     uint flagMomo : 0x0009DE20;   // bit 15: momorin outside, 22: got iron bond
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
     
+    uint timePrev : 0x9D438;
+    uint gCounter : 0x9E1EC;
     // Music lag counters (to be patched in init)
     ushort cmuCount : 0x000A5B3E;
     uint totalCMUlag : 0x000A5B40;
@@ -98,22 +100,53 @@ init{
     print("Installed hooks");
     
     
-    refreshRate = 50;
+    refreshRate = 100;
     Func<uint, int, bool> bitIsSet = (bitMask, bitPos) => {
         return ((bitMask & (1 << bitPos)) != 0);
     };
     vars.bitIsSet = bitIsSet;
     vars.triggeredSplits = new bool[50];
+    
+    vars.cmuCount = 0;
+    vars.totalLag = 0;
 }
 update{
     if (version == "")
         return false;
-    if (vars.cmuTextComponent != null && timer.CurrentPhase == TimerPhase.Running)
+    
+    if (timer.CurrentPhase == TimerPhase.Running)
     {
-        if (current.cmuCount != old.cmuCount)
-            vars.cmuTextComponent.Text1 = String.Format("CMU count: {0}", current.cmuCount);
-        if (current.totalCMUlag != old.totalCMUlag)
-            vars.cmuTextComponent.Text2 = String.Format("Total lag: {0} ms", current.totalCMUlag);
+        if (vars.cmuTextComponent != null)
+        {
+            if (current.cmuCount != old.cmuCount)
+                vars.cmuTextComponent.Text1 = String.Format("CMU count: {0}", current.cmuCount);
+            if (current.totalCMUlag != old.totalCMUlag)
+                vars.cmuTextComponent.Text2 = String.Format("Total lag: {0} ms", current.totalCMUlag);
+        }
+        if (vars.debugText != null && current.timePrev > old.timePrev)
+        {
+            int diff = (int)(current.timePrev - old.timePrev);
+            int frameDiff = (int)(current.gCounter - old.gCounter);
+            int lag = diff - frameDiff * 20;
+            
+            if (frameDiff <= 0)
+            {
+                //print(String.Format("WARNING: Detected time difference of {0} ms with 0 frames elapsed", diff));
+            }
+            else if (lag < 80)
+            {
+                //print(String.Format("WARNING: Detected abnormally low lag ({0} ms/{1} f); ignoring", diff, frameDiff));
+            }
+            else
+            {
+                ++vars.cmuCount;
+                vars.totalLag += lag;
+                print(String.Format("Detected {0} ms of lag ({1} ms/{2} f); count = {3}, total = {4}",
+                    lag, diff, frameDiff, vars.cmuCount, vars.totalLag));
+                vars.debugText.Text1 = String.Format("#{0}/{1}ms", vars.cmuCount, vars.totalLag);
+                vars.debugText.Text2 = String.Format("+{0}ms/{1}f", diff, frameDiff);
+            }
+        }
     }
     if (current.cmuCount > old.cmuCount)
         print(String.Format("CMU count {0} => {1}", old.cmuCount, current.cmuCount));
@@ -175,10 +208,16 @@ startup{
     vars.timerModel = new TimerModel { CurrentState = timer };
     // Search for text component to display CMU count and CMU lag
     vars.cmuTextComponent = null;
+    vars.debugText = null;
     foreach (dynamic component in timer.Layout.Components)
     {
-        if (component.GetType().Name == "TextComponent" && component.Settings.Text1 == "CMU count")
-            vars.cmuTextComponent = component.Settings;
+        if (component.GetType().Name == "TextComponent")
+        {
+            if (component.Settings.Text1 == "CMU count")
+                vars.cmuTextComponent = component.Settings;
+            else if (component.Settings.Text1 == "Test")
+                vars.debugText = component.Settings;
+        }
     }
 }
 
@@ -242,7 +281,7 @@ split{
 }
 
 gameTime{
-    return timer.CurrentTime.RealTime - TimeSpan.FromMilliseconds(current.totalCMUlag)/* + TimeSpan.FromMilliseconds(93*current.cmuCount)*/;
+    return timer.CurrentTime.RealTime - TimeSpan.FromMilliseconds(current.totalCMUlag);
 }
 
 reset{
@@ -260,4 +299,11 @@ onReset{
         vars.cmuTextComponent.Text1 = "CMU count";
         vars.cmuTextComponent.Text2 = "Total lag";
     }
+    if (vars.debugText != null)
+    {
+        vars.debugText.Text1 = "Test";
+        vars.debugText.Text2 = " ";
+    }
+    vars.cmuCount = 0;
+    vars.totalLag = 0;
 }
