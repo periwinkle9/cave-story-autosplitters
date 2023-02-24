@@ -248,6 +248,22 @@ init{
 update{
     if (version == "")
         return false;
+    
+    // Update music lag stats (if the text component exists)
+    if (timer.CurrentPhase == TimerPhase.Running && game.ProcessName == "Doukutsu")
+    {
+        if (vars.cmuTextComponent != null)
+        {
+            if (current.cmuCount != old.cmuCount)
+                vars.cmuTextComponent.Text1 = String.Format("CMU count: {0}", current.cmuCount);
+            if (current.totalCMUlag != old.totalCMUlag)
+                vars.cmuTextComponent.Text2 = String.Format("Total lag: {0} ms", current.totalCMUlag);
+        }
+        if (current.cmuCount > old.cmuCount)
+            print(String.Format("CMU count {0} => {1}", old.cmuCount, current.cmuCount));
+        if (current.totalCMUlag > old.totalCMUlag)
+            print(String.Format("Total CMU lag {0} => {1}", old.totalCMUlag, current.totalCMUlag));
+    }
 }
 startup{
     settings.Add("SplitPolarStar", false, "Obtain Polar Star");
@@ -302,6 +318,18 @@ startup{
     settings.Add("SplitBestEnd", true, "Got Best Ending");
     
     vars.timerModel = new TimerModel { CurrentState = timer };
+    
+    // Search for text component to display CMU count and CMU lag
+    vars.cmuTextComponent = null;
+    foreach (dynamic component in timer.Layout.Components)
+    {
+        if (component.GetType().Name == "TextComponent" && component.Settings.Text1 == "CMU count")
+        {
+            vars.cmuTextComponent = component.Settings;
+            print("Using text component instead of Game Time for music lag timing");
+            break;
+        }
+    }
 }
 
 start{
@@ -364,11 +392,11 @@ split{
 }
 
 gameTime{
-    if (game.ProcessName == "Doukutsu")
+    if (game.ProcessName == "Doukutsu" && vars.cmuTextComponent == null)
         return timer.CurrentTime.RealTime - TimeSpan.FromMilliseconds(current.totalCMUlag);
 }
 isLoading{
-    if (game.ProcessName != "Doukutsu")
+    if (game.ProcessName != "Doukutsu" || vars.cmuTextComponent != null)
         return (current.gameFlags & 2) == 0;
 }
 
@@ -380,4 +408,11 @@ exit{
     // Reset on game exit only if the checkbox is ticked and the run hasn't already finished
     if (settings.ResetEnabled && timer.CurrentPhase != TimerPhase.Ended)
         vars.timerModel.Reset();
+}
+onReset{
+    if (vars.cmuTextComponent != null)
+    {
+        vars.cmuTextComponent.Text1 = "CMU count";
+        vars.cmuTextComponent.Text2 = "Total lag";
+    }
 }
