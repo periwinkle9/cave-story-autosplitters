@@ -33,6 +33,10 @@ state("Doukutsu", "1.0.0.6"){
     uint flagCore : 0x0009DE08;   // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x0009DE20;   // bit 15: momorin outside, 22: got iron bond
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
+    
+    // Music lag counters (to be patched in init)
+    ushort cmuCount : 0x000A5B3E;
+    uint totalCMUlag : 0x000A5B40;
 }
 
 state("CaveStory+", "Steam"){
@@ -146,7 +150,82 @@ init{
     {
         if (modules.First().FileVersionInfo.FileVersion == "1, 0, 0, 6")
             version = "1.0.0.6";
-        refreshRate = 50;
+        
+        // Forgive me speedrun gods, for I have sinned
+        Func<IntPtr, byte[], byte[], bool> verifyAndWrite = (addr, chk, newBytes) => {
+            if (chk.Length != newBytes.Length)
+                return false;
+            var len = newBytes.Length;
+            byte[] prevBytes = new byte[len];
+            // Check that the bytes we're overwriting match the expected values
+            if (!game.ReadBytes(addr, len, out prevBytes) || !Enumerable.SequenceEqual(prevBytes, chk))
+                return false;
+            // Write the new bytes
+            if (!game.WriteBytes(addr, newBytes))
+                return false;
+            
+            return true;
+        };
+        
+        var payload = new byte[] {
+            // updateLag()
+            0x30, 0xC0,                           // xor al, al
+            0x8B, 0x0D, 0x3C, 0xD4, 0x49, 0x00,   // mov ecx, dword ptr [49D43C] ; Flip_SystemTask()::timeNow
+            0xBA, 0x38, 0xD4, 0x49, 0x00,         // mov edx, 49D438             ; &Flip_SystemTask()::timePrev
+            0x38, 0x05, 0x3C, 0x5B, 0x4A, 0x00,   // cmp byte ptr [4A5B3C], al   ; unused space for 'bool isCMUPause' variable
+            0x74, 0x16,                           // je :end
+            0xA2, 0x3C, 0x5B, 0x4A, 0x00,         // mov byte ptr [4A5B3C], al   ; isCMUPause = false
+            0xA1, 0x40, 0x5B, 0x4A, 0x00,         // mov eax, dword ptr [4A5B40] ; unused space for 'unsigned totalLag' variable
+            0x01, 0xC8,                           // add eax, ecx
+            0x83, 0xE8, 0x14,                     // sub eax, 20
+            0x2B, 0x02,                           // sub eax, dword ptr [edx]    ; totalLag + timeNow - timePrev - 20
+            0xA3, 0x40, 0x5B, 0x4A, 0x00,         // mov dword ptr [4A5B40], eax ; update totalLag
+                                                  // :end
+            0x89, 0x0A,                           // mov dword ptr [edx], ecx    ; timePrev = timeNow
+            0xC3,                                 // ret
+            0xCC, 0xCC,                           // INT3 (to keep the next function 16-byte aligned)
+            // hooks for the StopOrganyaMusic() calls in ChangeMusic() and RecallMusic()
+            0xB8, 0x3C, 0x5B, 0x4A, 0x00,         // mov eax, 4A5B3C
+            0xFE, 0x00,                           // inc byte ptr [eax]          ; isCMUPause = true
+            0x66, 0xFF, 0x40, 0x02,               // inc word ptr [eax+2]        ; ++cmuCount
+            0xE9, 0xF0, 0xBB, 0x00, 0x00,         // jmp 41C7F0                  ; jump to StopOrganyaMusic()
+            // code for resetting the CMU and lag counts when the run is started
+            0x31, 0xC0,                           // xor eax, eax
+            0xA3, 0x3C, 0x5B, 0x4A, 0x00,         // mov dword ptr [4A5B3C], eax ; cmuCount = 0 (also sets isCMUPause = false)
+            0xA3, 0x40, 0x5B, 0x4A, 0x00,         // mov dword ptr [4A5B40], eax ; totalLag = 0
+            0xE9, 0xCF, 0x02, 0x01, 0x00          // jmp 420EE0                  ; jump to ChangeMusic()
+        };
+        bool success = true;
+        success = success && verifyAndWrite((IntPtr)0x410BC0, new byte[] {
+            0x55, 0x8B, 0xEC, 0x81, 0xEC, 0x10, 0x01, 0x00, 0x00, 0xA1, 0x20, 0x8B, 0x49, 0x00, 0x89, 0x45,
+            0xFC, 0x68, 0x28, 0xE3, 0x49, 0x00, 0x68, 0x60, 0xC4, 0x48, 0x00, 0x8D, 0x85, 0xF0, 0xFE, 0xFF,
+            0xFF, 0x50, 0xE8, 0x29, 0x04, 0x07, 0x00, 0x83, 0xC4, 0x0C, 0x8D, 0x8D, 0xF0, 0xFE, 0xFF, 0xFF,
+            0x51, 0xFF, 0x15, 0xF8, 0xC0, 0x48, 0x00, 0x8B, 0x4D, 0xFC, 0xE8, 0xC2, 0x01, 0x07, 0x00, 0x8B,
+            0xE5, 0x5D, 0xC3, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC,
+            0x55}, payload);
+            
+        
+        // Hook into Flip_SystemTask() and insert a call into our lag-counting code
+        success = success && verifyAndWrite((IntPtr)0x40B395, new byte[] {0xA1, 0x3C, 0xD4, 0x49, 0x00, 0xA3, 0x38, 0xD4, 0x49, 0x00},
+            new byte[] {
+            0xE8, 0x26, 0x58, 0x00, 0x00,         // call 410BC0 ; call updateLag()
+            0x90, 0x90, 0x90, 0x90, 0x90          // nop out the extra bytes
+        });
+        // Replace calls to StopOrganyaMusic() in ChangeMusic() and RecallMusic() with calls to the aforementioned hooks
+        var bytes = new byte[] { 0xFC, 0xFE };
+        var oldBytes = new byte[] { 0xB8, 0xFF };
+        success = success && verifyAndWrite((IntPtr)0x420F0E, oldBytes, bytes); // ChangeMusic()
+        success = success && verifyAndWrite((IntPtr)0x420F55, oldBytes, bytes); // RecallMusic()
+        // Reset the lag count when the run is started (at the end of ModeTitle())
+        success = success && verifyAndWrite((IntPtr)0x41038D, new byte[] {0x4F, 0x0B, 0x01}, new byte[] {0x6F, 0x08, 0x00});
+        
+        if (success)
+            print("Successfully installed music lag timing hooks");
+        else
+        {
+            print("CS AUTOSPLITTER ERROR: Failed to install music lag timing hooks! Disabling autosplitter...");
+            version = ""; // Disable autosplitter if something went wrong
+        }
     }
     else
     {
@@ -156,7 +235,6 @@ init{
             version = "Steam";
         else if (memSize == 1355776)
             version = "Epic";
-        refreshRate = 60;
     }
     if (version == "")
         print("ERROR: Unrecognized game version!\nModuleMemorySize: " + memSize);
@@ -285,8 +363,13 @@ split{
     return false;
 }
 
+gameTime{
+    if (game.ProcessName == "Doukutsu")
+        return timer.CurrentTime.RealTime - TimeSpan.FromMilliseconds(current.totalCMUlag);
+}
 isLoading{
-    return (current.gameFlags & 2) == 0;
+    if (game.ProcessName != "Doukutsu")
+        return (current.gameFlags & 2) == 0;
 }
 
 reset{
