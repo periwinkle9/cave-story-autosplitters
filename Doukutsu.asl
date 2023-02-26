@@ -81,9 +81,11 @@ init{
         0xE9, 0xF0, 0xBB, 0x00, 0x00,         // jmp 41C7F0                  ; jump to StopOrganyaMusic()
         // code for resetting the CMU and lag counts when the run is started
         0x31, 0xC0,                           // xor eax, eax
+        0x39, 0x05, 0xE4, 0xE1, 0x49, 0x00,   // cmp dword ptr [49E1E4], eax ; check if pressing New or Load
+        0x75, 0x0A,                           // jne short 410C14            ; if Load, skip the next two instructions (don't reset counters)
         0xA3, 0x3C, 0x5B, 0x4A, 0x00,         // mov dword ptr [4A5B3C], eax ; cmuCount = 0 (also sets isCMUPause = false)
         0xA3, 0x40, 0x5B, 0x4A, 0x00,         // mov dword ptr [4A5B40], eax ; totalLag = 0
-        0xE9, 0xCF, 0x02, 0x01, 0x00          // jmp 420EE0                  ; jump to ChangeMusic()
+        0xE9, 0xC7, 0x02, 0x01, 0x00          // jmp 420EE0                  ; jump to ChangeMusic()
     };
     game.WriteBytes((IntPtr)0x410BC0, payload);
     // Hook into Flip_SystemTask() and insert a call into our lag-counting code
