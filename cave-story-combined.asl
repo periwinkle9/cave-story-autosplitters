@@ -158,13 +158,12 @@ init{
             var len = newBytes.Length;
             byte[] prevBytes = new byte[len];
             // Check that the bytes we're overwriting match the expected values
-            if (!game.ReadBytes(addr, len, out prevBytes) || !Enumerable.SequenceEqual(prevBytes, chk))
+            if (!game.ReadBytes(addr, len, out prevBytes))
                 return false;
-            // Write the new bytes
-            if (!game.WriteBytes(addr, newBytes))
-                return false;
-            
-            return true;
+            if (Enumerable.SequenceEqual(prevBytes, chk))
+                return game.WriteBytes(addr, newBytes); // Apply patch
+            else
+                return Enumerable.SequenceEqual(prevBytes, newBytes); // Accept already-patched game
         };
         
         var payload = new byte[] {
