@@ -146,7 +146,6 @@ init{
     {
         if (modules.First().FileVersionInfo.FileVersion == "1, 0, 0, 6")
             version = "1.0.0.6";
-        refreshRate = 50;
     }
     else
     {
@@ -156,7 +155,6 @@ init{
             version = "Steam";
         else if (memSize == 1355776)
             version = "Epic";
-        refreshRate = 60;
     }
     if (version == "")
         print("ERROR: Unrecognized game version!\nModuleMemorySize: " + memSize);
