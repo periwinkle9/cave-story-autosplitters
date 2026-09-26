@@ -35,7 +35,7 @@ state("Doukutsu", "1.0.0.6"){
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
 }
 
-state("CaveStory+", "Steam"){
+state("CaveStory+", "Steam_Legacy"){
     uint mapId : 0x00106AE4;
     uint musicId : 0x00106AE8;
     uint prevMusicId : 0x00106AF0;
@@ -141,7 +141,10 @@ init{
         throw new Exception("init - module not found, retrying");
     }
     
-    int memSize = modules.First().ModuleMemorySize;
+    string sha1Hash;
+    using (var sha1 = System.Security.Cryptography.SHA1.Create())
+        using (var fs = File.OpenRead(modules.First().FileName))
+            sha1Hash = string.Concat(sha1.ComputeHash(fs).Select(b => b.ToString("X2")));
     if (game.ProcessName == "Doukutsu")
     {
         if (modules.First().FileVersionInfo.FileVersion == "1, 0, 0, 6")
@@ -149,15 +152,21 @@ init{
     }
     else
     {
-        if (memSize == 1236992)
-            version = "Humble";
-        else if (memSize == 1245184)
-            version = "Steam";
-        else if (memSize == 1355776)
-            version = "Epic";
+        switch (sha1Hash)
+        {
+            case "A371363B6C73028CFEC85969D6212D17C0EBCEC4": // Steam (Legacy)
+                version = "Steam_Legacy";
+                break;
+            case "38EE38BBC54C9041368DA9826236ACD3EAD7A649": // Humble
+                version = "Humble";
+                break;
+            case "58089C7C66B6613A1F27E117C9FDE07A8BF589A8": // Epic
+                version = "Epic";
+                break;
+        }
     }
     if (version == "")
-        print("ERROR: Unrecognized game version!\nModuleMemorySize: " + memSize);
+        print("ERROR: Unrecognized game version!\nSHA1: " + sha1Hash);
     
     Func<uint, int, bool> bitIsSet = (bitMask, bitPos) => {
         return ((bitMask & (1 << bitPos)) != 0);
