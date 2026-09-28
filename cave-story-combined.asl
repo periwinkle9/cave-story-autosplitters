@@ -1,6 +1,6 @@
 // Cave Story/Cave Story+ autosplitter by periwinkle
 // (Based off of magmapeach's CS freeware Best Ending autosplitter)
-// Thanks to Ekorn for providing me with the memory addresses for the Steam version
+// Thanks to Ekorn for providing me with the memory addresses for the Steam (legacy) version
 
 // CS freeware
 state("Doukutsu", "1.0.0.6"){
@@ -33,6 +33,40 @@ state("Doukutsu", "1.0.0.6"){
     uint flagCore : 0x0009DE08;   // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x0009DE20;   // bit 15: momorin outside, 22: got iron bond
     uint flagPignon : 0x0009DE60; // bit 24: ma pignon (flag 1560)
+    uint flagBallos : 0x0009DE68; // bit 0:  Ballos (flag 1600)
+}
+
+state("CaveStory+", "Steam_2026"){
+    uint mapId : 0x00342B3C;
+    uint musicId : 0x00342B88;
+    uint prevMusicId : 0x003909C8;
+    uint airMeter : 0x00307DD4;
+    int gTSwaitnext : 0x002D12C0;
+    uint gameFlags : 0x00307CF0;
+    
+    // For Bad Ending split condition
+    uint skyDragon : 0x003192A0; // this should be 212 for the dragon
+    uint skyDragonActNo: 0x003192F0; // TODO
+    
+    // For Normal Ending split condition
+    uint vTrigger : 0x00318C80; // should be 46 (H/V trigger)
+    byte vTriggerCond : 0x00318C58;
+    
+    // These store various story progression flags, one flag per bit.
+    //byte<1000> flagArray : 0x003077F8;
+    uint flagEgg : 0x00307804;     // bit 24: done egg (flag 120)
+    uint flagFire : 0x00307814;    // bit 17: fireball (flag 241)
+    uint flagGumKey : 0x00307810;  // bit 29: got gum key (flag 221)
+    uint flagGum : 0x00307834;     // bit 4:  can get gum key (flag 484), 21: gum (flag 501)
+    uint flagGrass : 0x00307838;   // bit 8:  done grass (flag 520)
+    uint flagPanties : 0x00307840; // bit 5:  panties (flag 581)
+    uint flagToroko : 0x00307844;  // bit 15: toroko defeated (flag 623)
+    uint flagCureA : 0x00307850;   // bit 7:  got cure all (flag 711)
+    uint flagCureA2 : 0x0030784C;  // bit 30: gave Cure-All to Gero (flag 702)
+    uint flagCore : 0x00307860;    // bit 0:  defeated Core (water level rose) (flag 832)
+    uint flagMomo : 0x00307878;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
+    uint flagPignon : 0x003078B8;  // bit 24: ma pignon (flag 1560)
+    uint flagBallos : 0x003078C0;  // bit 0:  Ballos (flag 1600)
 }
 
 state("CaveStory+", "Steam_Legacy"){
@@ -65,6 +99,7 @@ state("CaveStory+", "Steam_Legacy"){
     uint flagCore : 0x000C3928;    // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x000C3940;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
     uint flagPignon : 0x000C3980;  // bit 24: ma pignon (flag 1560)
+    uint flagBallos : 0x000C3988;  // bit 0:  Ballos (flag 1600)
 }
 
 state("CaveStory+", "Humble"){
@@ -97,6 +132,7 @@ state("CaveStory+", "Humble"){
     uint flagCore : 0x000C1618;    // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x000C1630;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
     uint flagPignon : 0x000C1670;  // bit 24: ma pignon (flag 1560)
+    uint flagBallos : 0x000C1678;  // bit 0:  Ballos (flag 1600)
 }
 
 state("CaveStory+", "Epic"){
@@ -129,6 +165,7 @@ state("CaveStory+", "Epic"){
     uint flagCore : 0x000DDAB0;    // bit 0:  defeated Core (water level rose) (flag 832)
     uint flagMomo : 0x000DDAC8;    // bit 15: momorin outside (flag 1039), 22: got iron bond (flag 1046)
     uint flagPignon : 0x000DDB08;  // bit 24: ma pignon (flag 1560)
+    uint flagBallos : 0x000DDB10;  // bit 0:  Ballos (flag 1600)
 }
 
 init{
@@ -154,6 +191,9 @@ init{
     {
         switch (sha1Hash)
         {
+            case "D3FC086B58EC6AC172703A7037F05AFB15A43281": // Steam (2026)
+                version = "Steam_2026";
+                break;
             case "A371363B6C73028CFEC85969D6212D17C0EBCEC4": // Steam (Legacy)
                 version = "Steam_Legacy";
                 break;
@@ -282,7 +322,7 @@ split{
     if (settings["SplitLeaveMushroom"] && !vars.triggeredSplits[39] && current.mapId == 16 && old.mapId == 83 && vars.bitIsSet(current.flagPignon, 24))                              { return vars.triggeredSplits[39] = true; }
     if (settings["SplitIronBond"]      && !vars.triggeredSplits[40] && vars.bitIsSet(current.flagMomo, 22) && !vars.bitIsSet(old.flagMomo, 22))                                      { return vars.triggeredSplits[40] = true; }
     if (settings["SplitSleep"]         && !vars.triggeredSplits[41] && current.mapId == 58 && current.musicId == 2 && old.musicId == 0 && vars.bitIsSet(current.flagMomo, 15))       { return vars.triggeredSplits[41] = true; }
-    if (settings["SplitEnterFinal"]    && !vars.triggeredSplits[42] && current.musicId == 29 && (old.musicId == 0 || old.musicId == 24))                                             { return vars.triggeredSplits[42] = true; }
+    if (settings["SplitEnterFinal"]    && !vars.triggeredSplits[42] && (current.musicId == 29 || current.musicId == 43) && (old.musicId == 0 || old.musicId == 24))                  { return vars.triggeredSplits[42] = true; }
     if (settings["SplitFinalCave"]     && !vars.triggeredSplits[43] && current.mapId == 62 && (old.mapId == 67 || old.mapId == 63))                                                  { return vars.triggeredSplits[43] = true; }
     if (settings["SplitMisery"]        && !vars.triggeredSplits[44] && current.mapId == 64 && current.musicId == 15 && old.musicId != 15)                                            { return vars.triggeredSplits[44] = true; }
     if (settings["SplitMiseryExit"]    && !vars.triggeredSplits[45] && current.mapId == 65 && old.mapId == 64)                                                                       { return vars.triggeredSplits[45] = true; }
@@ -291,7 +331,7 @@ split{
     if (settings["SplitUndeadCore"]    && !vars.triggeredSplits[48] && current.prevMusicId == 0 && old.prevMusicId == 32 && current.gTSwaitnext == 140)                              { return vars.triggeredSplits[48] = true; }
     if (settings["SplitNormalEnd"]     && !vars.triggeredSplits[49] && current.mapId == 70 && current.musicId == 18 && current.vTrigger == 46 && current.vTriggerCond == 0 && old.vTriggerCond == 128) { return vars.triggeredSplits[49] = true; }
     if (settings["SplitEnterHell"]     && !vars.triggeredSplits[50] && current.musicId == 36 && old.musicId != 36)                                                                   { return vars.triggeredSplits[50] = true; }
-    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[51] && current.mapId == 91 && current.musicId == 0 && old.musicId != 0)                                              { return vars.triggeredSplits[51] = true; }
+    if (settings["SplitBestEnd"]       && !vars.triggeredSplits[51] && vars.bitIsSet(current.flagBallos, 0) && current.mapId == 91 && current.musicId == 0 && old.musicId != 0)      { return vars.triggeredSplits[51] = true; }
     
     return false;
 }
